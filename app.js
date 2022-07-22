@@ -1,14 +1,16 @@
-/* eslint-disable import/no-extraneous-dependencies */
 const express = require('express');
 const mongoose = require('mongoose');
 
-const bodyParser = require('body-parser');
-
 const { PORT = 3000 } = process.env;
+const path = require('path');
+
 const app = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+const PUBLIC_FOLDER = path.join(__dirname, 'public');
+
+app.use(express.static(PUBLIC_FOLDER));
+
+app.use(express.json());
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {});
 
