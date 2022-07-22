@@ -12,9 +12,18 @@ app.use(express.static(PUBLIC_FOLDER));
 
 app.use(express.json());
 
+app.use((req, res, next) => {
+  req.user = {
+    _id: '62dac5d71b1e2afdfd4a0b95',
+  };
+
+  next();
+});
+
 mongoose.connect('mongodb://localhost:27017/mestodb', {});
 
 app.use('/users', require('./routes/users'));
+app.use('/cards', require('./routes/cards'));
 
 app.listen(PORT, () => {
   console.log('Example app listening on port 3000!');
