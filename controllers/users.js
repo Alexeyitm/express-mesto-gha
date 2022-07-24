@@ -17,7 +17,7 @@ module.exports.getUserById = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Переданы некорректный id' });
+        res.status(400).send({ message: 'Передан некорректный id' });
         return;
       }
       res.status(500).send({ message: 'Ошибка сервера' });
@@ -28,7 +28,13 @@ module.exports.setUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректныe данные' });
+        return;
+      }
+      res.status(500).send({ message: 'Ошибка сервера' });
+    });
 };
 
 module.exports.updateUser = (req, res) => {
