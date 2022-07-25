@@ -20,9 +20,15 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCardById = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
+  Card.findByIdAndRemove(req.params.cardId)
     .then((card) => res.send({ data: card }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректныe данные' });
+        return;
+      }
+      res.status(500).send({ message: 'Ошибка сервера' });
+    });
 };
 
 module.exports.addLike = (req, res) => Card.findByIdAndUpdate(
