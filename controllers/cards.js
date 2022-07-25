@@ -25,14 +25,30 @@ module.exports.deleteCardById = (req, res) => {
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
-module.exports.addLike = (req) => Card.findByIdAndUpdate(
+module.exports.addLike = (req, res) => Card.findByIdAndUpdate(
   req.params.cardId,
   { $addToSet: { likes: req.user._id } },
   { new: true },
-);
+)
+  .then((user) => res.send({ data: user }))
+  .catch((err) => {
+    if (err.name === 'CastError') {
+      res.status(400).send({ message: 'Переданы некорректныe данные' });
+      return;
+    }
+    res.status(500).send({ message: 'Ошибка сервера' });
+  });
 
-module.exports.deleteLike = (req) => Card.findByIdAndUpdate(
+module.exports.deleteLike = (req, res) => Card.findByIdAndUpdate(
   req.params.cardId,
   { $pull: { likes: req.user._id } },
   { new: true },
-);
+)
+  .then((user) => res.send({ data: user }))
+  .catch((err) => {
+    if (err.name === 'CastError') {
+      res.status(400).send({ message: 'Переданы некорректныe данные' });
+      return;
+    }
+    res.status(500).send({ message: 'Ошибка сервера' });
+  });

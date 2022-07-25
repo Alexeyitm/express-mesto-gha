@@ -33,6 +33,10 @@ module.exports.setUser = (req, res) => {
         res.status(400).send({ message: 'Переданы некорректныe данные' });
         return;
       }
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректныe данные' });
+        return;
+      }
       res.status(500).send({ message: 'Ошибка сервера' });
     });
 };
@@ -46,6 +50,10 @@ module.exports.updateUser = (req, res) => {
   )
     .then((user) => res.send({ data: user }))
     .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректныe данные' });
+        return;
+      }
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорректныe данные' });
         return;
