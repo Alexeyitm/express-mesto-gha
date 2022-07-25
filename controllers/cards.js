@@ -30,7 +30,13 @@ module.exports.addLike = (req, res) => Card.findByIdAndUpdate(
   { $addToSet: { likes: req.user._id } },
   { new: true },
 )
-  .then((user) => res.send({ data: user }))
+  .then((user) => {
+    if (user) {
+      res.send({ data: user });
+      return;
+    }
+    res.status(404).send({ message: 'Пользователь по указанному id не найден' });
+  })
   .catch((err) => {
     if (err.name === 'CastError') {
       res.status(400).send({ message: 'Переданы некорректныe данные' });
@@ -44,7 +50,13 @@ module.exports.deleteLike = (req, res) => Card.findByIdAndUpdate(
   { $pull: { likes: req.user._id } },
   { new: true },
 )
-  .then((user) => res.send({ data: user }))
+  .then((user) => {
+    if (user) {
+      res.send({ data: user });
+      return;
+    }
+    res.status(404).send({ message: 'Пользователь по указанному id не найден' });
+  })
   .catch((err) => {
     if (err.name === 'CastError') {
       res.status(400).send({ message: 'Переданы некорректныe данные' });
