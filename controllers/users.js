@@ -1,5 +1,8 @@
 const User = require('../models/user');
 
+// eslint-disable-next-line import/order
+const validator = require('validator');
+
 module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
@@ -39,10 +42,18 @@ module.exports.setUser = (req, res) => {
     email,
     password,
   })
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      if (validator.isEmail(user.email)) {
+        res.send({ data: user });
+      }
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: ' Переданы некорректные данные при создании пользователя.' });
+        return;
+      }
+      if (err.code === 11000) {
+        res.status(404).send({ message: 'Пользователь c таким email уже существует.' });
         return;
       }
       res.status(500).send({ message: 'Ошибка сервера.' });
