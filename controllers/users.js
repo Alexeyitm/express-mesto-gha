@@ -1,7 +1,6 @@
+// eslint-disable-next-line no-unused-vars
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
-
-// eslint-disable-next-line import/order
-const validator = require('validator');
 
 module.exports.getAllUsers = (req, res) => {
   User.find({})
@@ -35,18 +34,15 @@ module.exports.setUser = (req, res) => {
     email,
     password,
   } = req.body;
-  User.create({
-    name,
-    about,
-    avatar,
-    email,
-    password,
-  })
-    .then((user) => {
-      if (validator.isEmail(user.email)) {
-        res.send({ data: user });
-      }
-    })
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    }))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: ' Переданы некорректные данные при создании пользователя.' });
