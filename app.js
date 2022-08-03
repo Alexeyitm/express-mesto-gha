@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+const { login, setUser } = require('./controllers/users');
+
 const { PORT = 3000 } = process.env;
 
 const app = express();
@@ -17,6 +19,8 @@ app.use((req, res, next) => {
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {});
 
+app.post('/signin', login);
+app.post('/signup', setUser);
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 

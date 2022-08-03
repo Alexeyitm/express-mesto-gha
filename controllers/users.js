@@ -1,6 +1,23 @@
-// eslint-disable-next-line no-unused-vars
 const bcrypt = require('bcryptjs');
+// eslint-disable-next-line no-unused-vars, import/no-unresolved
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      res.send({ token });
+      res
+        .cookie('jwt', token, {
+          maxAge: '7d',
+          httpOnly: true,
+        })
+        .end();
+    })
+    .catch(() => res.status(500).send({ message: 'Ошибка сервера.' }));
+};
 
 module.exports.getAllUsers = (req, res) => {
   User.find({})
