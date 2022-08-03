@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+const { errors } = require('celebrate');
 const { login, setUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 
@@ -14,6 +15,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {});
 
 app.post('/signin', login);
 app.post('/signup', setUser);
+
+app.use(errors());
 
 app.use(auth);
 
