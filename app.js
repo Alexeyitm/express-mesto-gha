@@ -13,12 +13,12 @@ app.use(express.json());
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {});
 
+app.use(auth);
+
 app.post('/signin', login);
 app.post('/signup', setUser);
 
 app.use(errors());
-
-app.use(auth);
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
