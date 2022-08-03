@@ -10,14 +10,6 @@ const app = express();
 
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '62dac5d71b1e2afdfd4a0b95',
-  };
-
-  next();
-});
-
 mongoose.connect('mongodb://localhost:27017/mestodb', {});
 
 app.post('/signin', login);
