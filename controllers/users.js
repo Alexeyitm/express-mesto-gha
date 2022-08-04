@@ -26,8 +26,9 @@ module.exports.getAllUsers = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
+  console.log(req.user._id);
   User.findById(req.user._id)
-    .then((users) => res.send({ data: users }))
+    .then((user) => res.send({ data: user }))
     .catch(() => res.status(500).send({ message: 'Ошибка сервера.' }));
 };
 
