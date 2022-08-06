@@ -2,7 +2,7 @@ const { celebrate, Joi } = require('celebrate');
 const router = require('express').Router();
 const {
   getAllUsers,
-  getUser,
+  getMe,
   getUserById,
   updateUser,
   updateAvatar,
@@ -10,7 +10,7 @@ const {
 
 router.get('/', getAllUsers);
 
-router.get('/me', getUser);
+router.get('/me', getMe);
 
 router.get('/:userId', getUserById);
 
