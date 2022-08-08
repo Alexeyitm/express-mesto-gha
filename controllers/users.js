@@ -80,7 +80,7 @@ module.exports.setUser = (req, res) => {
         return;
       }
       if (err.code === 11000) {
-        res.status(404).send({ message: 'Пользователь c таким email уже существует.' });
+        res.status(409).send({ message: 'Пользователь c таким email уже существует.' });
         return;
       }
       res.status(500).send({ message: 'Ошибка сервера.' });
