@@ -7,14 +7,17 @@ module.exports.login = (req, res) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res
-        .cookie('jwt', token, {
-          maxAge: 3600000,
-          httpOnly: true,
-        })
-        .send({ message: 'Авторизация прошла успешно!' })
-        .end();
+      if (user) {
+        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+        res
+          .cookie('jwt', token, {
+            maxAge: 3600000,
+            httpOnly: true,
+          })
+          .send({ message: 'Авторизация прошла успешно!' })
+          .end();
+      }
+      res.status(401).send({ message: 'Пользователь по указанным email и password не найден.' });
     })
     .catch(() => res.status(500).send({ message: 'Ошибка сервера.' }));
 };
