@@ -38,13 +38,13 @@ module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь по указанному id не найден.');
+        throw new NotFoundError('К сожалению, пользователь по указанному id не найден.');
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new SendIncorrectDataError('Передан некорректный id.');
+        throw new SendIncorrectDataError('К сожалению, передан некорректный id.');
       }
       next(err);
     })
@@ -78,10 +78,10 @@ module.exports.setUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new SendIncorrectDataError('Переданы некорректные данные при создании пользователя.');
+        throw new SendIncorrectDataError('К сожалению, переданы некорректные данные при создании пользователя.');
       }
       if (err.code === 11000) {
-        throw new UserFoundError('Пользователь c таким email уже существует.');
+        throw new UserFoundError('К сожалению, пользователь c таким email уже существует.');
       }
       next(err);
     })
@@ -97,13 +97,13 @@ module.exports.updateUser = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь по указанному id не найден.');
+        throw new NotFoundError('К сожалению, пользователь по указанному id не найден.');
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new SendIncorrectDataError('Переданы некорректные данные при обновлении профиля.');
+        throw new SendIncorrectDataError('К сожалению, переданы некорректные данные при обновлении профиля.');
       }
       next(err);
     })
@@ -119,13 +119,13 @@ module.exports.updateAvatar = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь по указанному id не найден.');
+        throw new NotFoundError('К сожалению, пользователь по указанному id не найден.');
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new SendIncorrectDataError('Переданы некорректные данные при обновлении аватара.');
+        throw new SendIncorrectDataError('К сожалению, переданы некорректные данные при обновлении аватара.');
       }
       next(err);
     })
