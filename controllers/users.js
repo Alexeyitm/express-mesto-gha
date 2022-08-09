@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-error');
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -17,19 +17,19 @@ module.exports.login = (req, res) => {
         .send({ message: 'Авторизация прошла успешно!' })
         .end();
     })
-    .catch(() => res.status(500).send({ message: 'Ошибка сервера.' }));
+    .catch(next);
 };
 
-module.exports.getAllUsers = (req, res) => {
+module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: 'Ошибка сервера.' }));
+    .catch(next);
 };
 
-module.exports.getMe = (req, res) => {
+module.exports.getMe = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Ошибка сервера.' }));
+    .catch(next);
 };
 
 module.exports.getUserById = (req, res, next) => {
@@ -46,10 +46,11 @@ module.exports.getUserById = (req, res, next) => {
         res.status(400).send({ message: 'Передан некорректный id.' });
       }
       next(err);
-    }).catch(next);
+    })
+    .catch(next);
 };
 
-module.exports.setUser = (req, res) => {
+module.exports.setUser = (req, res, next) => {
   const {
     name,
     about,
@@ -77,17 +78,16 @@ module.exports.setUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: ' Переданы некорректные данные при создании пользователя.' });
-        return;
       }
       if (err.code === 11000) {
         res.status(409).send({ message: 'Пользователь c таким email уже существует.' });
-        return;
       }
-      res.status(500).send({ message: 'Ошибка сервера.' });
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -103,13 +103,13 @@ module.exports.updateUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
-        return;
       }
-      res.status(500).send({ message: 'Ошибка сервера.' });
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
-module.exports.updateAvatar = (req, res) => {
+module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -127,6 +127,7 @@ module.exports.updateAvatar = (req, res) => {
         res.status(400).send({ message: 'Переданы некорректные данные при обновлении аватара.' });
         return;
       }
-      res.status(500).send({ message: 'Ошибка сервера.' });
-    });
+      next(err);
+    })
+    .catch(next);
 };

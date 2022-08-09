@@ -1,25 +1,25 @@
 const Card = require('../models/card');
 
-module.exports.getAllCards = (req, res) => {
+module.exports.getAllCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch(() => res.status(500).send({ message: 'Ошибка сервера.' }));
+    .catch(next);
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные при создании карточки.' });
-        return;
       }
-      res.status(500).send({ message: 'Ошибка сервера.' });
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
-module.exports.deleteCardById = (req, res) => {
+module.exports.deleteCardById = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((user) => {
       if (user) {
@@ -31,13 +31,13 @@ module.exports.deleteCardById = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Передан некорректный id карточки' });
-        return;
       }
-      res.status(500).send({ message: 'Ошибка сервера.' });
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
-module.exports.addLike = (req, res) => {
+module.exports.addLike = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -53,13 +53,13 @@ module.exports.addLike = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
-        return;
       }
-      res.status(500).send({ message: 'Ошибка сервера.' });
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
-module.exports.deleteLike = (req, res) => {
+module.exports.deleteLike = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -75,8 +75,8 @@ module.exports.deleteLike = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
-        return;
       }
-      res.status(500).send({ message: 'Ошибка сервера.' });
-    });
+      next(err);
+    })
+    .catch(next);
 };
