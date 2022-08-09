@@ -31,8 +31,9 @@ module.exports.deleteCardById = (req, res, next) => {
             .then((deletedCard) => {
               res.send({ data: deletedCard });
             });
+        } else {
+          throw new NotEnoughRightsError('К сожалению, нельзя удалить чужую карточку');
         }
-        throw new NotEnoughRightsError('К сожалению, нельзя удалить чужую карточку');
       }
       throw new NotFoundError('К сожалению, карточка с указанным id не найдена.');
     })
