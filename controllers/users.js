@@ -77,10 +77,10 @@ module.exports.setUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new SendIncorrectDataError('К сожалению, переданы некорректные данные при создании пользователя.');
+        next(new SendIncorrectDataError('К сожалению, переданы некорректные данные при создании пользователя.'));
       }
       if (err.code === 11000) {
-        throw new UserFoundError('К сожалению, пользователь c таким email уже существует.');
+        next(new UserFoundError('К сожалению, пользователь c таким email уже существует.'));
       }
       next(err);
     });
