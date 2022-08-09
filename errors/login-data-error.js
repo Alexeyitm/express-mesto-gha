@@ -1,8 +1,8 @@
-class IncorrectDataError extends Error {
+class LoginDataError extends Error {
   constructor(message) {
     super(message);
     this.statusCode = 401;
   }
 }
 
-module.exports = IncorrectDataError;
+module.exports = LoginDataError;

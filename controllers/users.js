@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-error');
+const SendIncorrectDataError = require('../errors/send-incorrect-data-error');
+const UserFoundError = require('../errors/user-found-error');
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
@@ -35,15 +37,14 @@ module.exports.getMe = (req, res, next) => {
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (user) {
-        res.send({ data: user });
-      } else {
+      if (!user) {
         throw new NotFoundError('Пользователь по указанному id не найден.');
       }
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Передан некорректный id.' });
+        throw new SendIncorrectDataError('Передан некорректный id.');
       }
       next(err);
     })
@@ -77,10 +78,10 @@ module.exports.setUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: ' Переданы некорректные данные при создании пользователя.' });
+        throw new SendIncorrectDataError('Переданы некорректные данные при создании пользователя.');
       }
       if (err.code === 11000) {
-        res.status(409).send({ message: 'Пользователь c таким email уже существует.' });
+        throw new UserFoundError('Пользователь c таким email уже существует.');
       }
       next(err);
     })
@@ -102,7 +103,7 @@ module.exports.updateUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
+        throw new SendIncorrectDataError('Переданы некорректные данные при обновлении профиля.');
       }
       next(err);
     })
@@ -124,8 +125,7 @@ module.exports.updateAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при обновлении аватара.' });
-        return;
+        throw new SendIncorrectDataError('Переданы некорректные данные при обновлении аватара.');
       }
       next(err);
     })
