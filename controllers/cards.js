@@ -47,13 +47,10 @@ module.exports.addLike = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((user) => {
-      if (user) {
-        res.send({ data: user });
-        return;
-      }
+    .orFail(() => {
       throw new NotFoundError('К сожалению, передан несуществующий id карточки.');
     })
+    .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new SendIncorrectDataError('К сожалению, переданы некорректные данные для постановки/снятии лайка.'));
@@ -68,13 +65,10 @@ module.exports.deleteLike = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((user) => {
-      if (user) {
-        res.send({ data: user });
-        return;
-      }
+    .orFail(() => {
       throw new NotFoundError('К сожалению, передан несуществующий id карточки.');
     })
+    .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new SendIncorrectDataError('К сожалению, переданы некорректные данные для постановки/снятии лайка.'));

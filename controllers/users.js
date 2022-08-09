@@ -36,12 +36,10 @@ module.exports.getMe = (req, res, next) => {
 
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('К сожалению, пользователь по указанному id не найден.');
-      }
-      res.send({ data: user });
+    .orFail(() => {
+      throw new NotFoundError('К сожалению, пользователь по указанному id не найден.');
     })
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new SendIncorrectDataError('К сожалению, передан некорректный id.'));
@@ -93,12 +91,10 @@ module.exports.updateUser = (req, res, next) => {
     { name, about },
     { new: true, runValidators: true },
   )
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('К сожалению, пользователь по указанному id не найден.');
-      }
-      res.send({ data: user });
+    .orFail(() => {
+      throw new NotFoundError('К сожалению, пользователь по указанному id не найден.');
     })
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new SendIncorrectDataError('К сожалению, переданы некорректные данные при обновлении профиля.'));
@@ -114,12 +110,10 @@ module.exports.updateAvatar = (req, res, next) => {
     { avatar },
     { new: true, runValidators: true },
   )
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('К сожалению, пользователь по указанному id не найден.');
-      }
-      res.send({ data: user });
+    .orFail(() => {
+      throw new NotFoundError('К сожалению, пользователь по указанному id не найден.');
     })
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new SendIncorrectDataError('К сожалению, переданы некорректные данные при обновлении аватара.'));
