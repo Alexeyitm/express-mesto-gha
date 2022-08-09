@@ -26,16 +26,16 @@ module.exports.deleteCardById = (req, res, next) => {
     .then((card) => {
       if (card) {
         if (req.user._id === card.owner._id.valueOf()) {
-          Card.findByIdAndRemove(req.params.cardId)
-            .then((deletedCard) => {
-              res.send({ data: deletedCard });
-            });
+          Card.findByIdAndRemove(req.params.cardId);
         } else {
           throw new NotEnoughRightsError('К сожалению, нельзя удалить чужую карточку');
         }
       } else {
         throw new NotFoundError('К сожалению, карточка с указанным id не найдена.');
       }
+    })
+    .then((deletedCard) => {
+      res.send({ data: deletedCard });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
