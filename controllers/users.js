@@ -35,11 +35,10 @@ module.exports.getMe = (req, res) => {
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (user) {
-        res.send({ data: user });
-        return;
+      if (!user) {
+        throw new NotFoundError('Пользователь по указанному id не найден.');
       }
-      throw new NotFoundError('Пользователь по указанному id не найден.');
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -96,11 +95,10 @@ module.exports.updateUser = (req, res) => {
     { new: true, runValidators: true },
   )
     .then((user) => {
-      if (user) {
-        res.send({ data: user });
-        return;
+      if (!user) {
+        throw new NotFoundError('Пользователь по указанному id не найден.');
       }
-      throw new NotFoundError('Пользователь по указанному id не найден.');
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -119,11 +117,10 @@ module.exports.updateAvatar = (req, res) => {
     { new: true, runValidators: true },
   )
     .then((user) => {
-      if (user) {
-        res.send({ data: user });
-        return;
+      if (!user) {
+        throw new NotFoundError('Пользователь по указанному id не найден.');
       }
-      throw new NotFoundError('Пользователь по указанному id не найден.');
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
