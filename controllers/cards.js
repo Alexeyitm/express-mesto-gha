@@ -22,20 +22,16 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCardById = (req, res, next) => {
-  Card.findById(req.params.cardId)
-    .then((card) => {
-      if (card) {
-        if (req.user._id === card.owner._id.valueOf()) {
-          Card.findByIdAndRemove(req.params.cardId);
-        } else {
-          throw new NotEnoughRightsError('К сожалению, нельзя удалить чужую карточку');
-        }
-      } else {
-        throw new NotFoundError('К сожалению, карточка с указанным id не найдена.');
-      }
+  Card.findByIdAndRemove(req.params.cardId)
+    .orFail(() => {
+      throw new NotFoundError('К сожалению, карточка с указанным id не найдена.');
     })
-    .then((deletedCard) => {
-      res.send({ data: deletedCard });
+    .then((card) => {
+      if (req.user._id === card.owner._id.valueOf()) {
+        res.send({ data: card });
+      } else {
+        throw new NotEnoughRightsError('К сожалению, нельзя удалить чужую карточку');
+      }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
