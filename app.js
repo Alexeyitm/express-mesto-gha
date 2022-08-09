@@ -4,6 +4,7 @@ const { errors } = require('celebrate');
 const { celebrate, Joi } = require('celebrate');
 const { login, setUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const error = require('./middlewares/error');
 const NotFoundError = require('./errors/not-found-error');
 
 const { PORT = 3000 } = process.env;
@@ -36,17 +37,7 @@ app.use('/*', () => {
 });
 app.use(errors());
 
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res
-    .status(statusCode)
-    .send({
-      message: statusCode === 500
-        ? 'Ошибка сервера'
-        : message,
-    });
-  next();
-});
+app.use(error);
 
 app.listen(PORT, () => {
   console.log('Example app listening on port 3000!');
