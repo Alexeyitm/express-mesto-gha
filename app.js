@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const { celebrate, Joi } = require('celebrate');
+const cookieParser = require('cookie-parser');
 const { login, setUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const error = require('./middlewares/error');
@@ -28,6 +29,8 @@ app.post('/signup', celebrate({
     password: Joi.string().required(),
   }).unknown(true),
 }), setUser);
+
+app.use(cookieParser());
 
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
