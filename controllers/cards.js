@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 const NotFoundError = require('../errors/not-found-error');
 const SendIncorrectDataError = require('../errors/send-incorrect-data-error');
+const NotEnoughRightsError = require('../errors/not-enough-rights-error');
 
 module.exports.getAllCards = (req, res, next) => {
   Card.find({})
@@ -22,11 +23,16 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCardById = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((user) => {
       if (user) {
-        res.send({ data: user });
-        return;
+        if (req.user._id === user.owner) {
+          Card.findByIdAndRemove(req.params.cardId)
+            .then((deletedCard) => {
+              res.send({ data: deletedCard });
+            });
+        }
+        throw new NotEnoughRightsError('К сожалению, нельзя удалить чужую карточку');
       }
       throw new NotFoundError('К сожалению, карточка с указанным id не найдена.');
     })
