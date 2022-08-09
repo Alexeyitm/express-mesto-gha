@@ -35,10 +35,10 @@ module.exports.getMe = (req, res) => {
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь по указанному id не найден.');
-      } else {
+      if (user) {
         res.send({ data: user });
+      } else {
+        throw new NotFoundError('Пользователь по указанному id не найден.');
       }
     })
     .catch((err) => {
