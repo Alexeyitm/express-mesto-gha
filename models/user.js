@@ -40,12 +40,12 @@ userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new LoginDataError('Неправильные почта или пароль');
+        throw new LoginDataError('Неправильные почта или пароль!');
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new LoginDataError('Неправильные почта или пароль');
+            throw new LoginDataError('Неправильные почта или пароль!');
           }
           return user;
         });
