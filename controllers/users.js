@@ -32,7 +32,7 @@ module.exports.getMe = (req, res) => {
     .catch(() => res.status(500).send({ message: 'Ошибка сервера.' }));
 };
 
-module.exports.getUserById = (req, res) => {
+module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (user) {
@@ -44,10 +44,8 @@ module.exports.getUserById = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Передан некорректный id.' });
-        return;
       }
-      res.status(500).send({ message: 'Ошибка сервера.' });
-    });
+    }).catch(next);
 };
 
 module.exports.setUser = (req, res) => {

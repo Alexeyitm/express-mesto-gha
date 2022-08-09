@@ -33,6 +33,11 @@ app.use('/cards', auth, require('./routes/cards'));
 app.use('/*', (req, res) => res.status(404).send({ message: 'К сожалению, запрашиваемая страница не найдена.' }));
 app.use(errors());
 
+app.use((err, req, res, next) => {
+  res.status(500).send({ message: 'Ошибка сервера.' });
+  next();
+});
+
 app.listen(PORT, () => {
   console.log('Example app listening on port 3000!');
 });
