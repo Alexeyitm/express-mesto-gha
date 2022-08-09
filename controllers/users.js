@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 // eslint-disable-next-line no-unused-vars, import/no-unresolved
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const NotFoundError = require('../errors/not-found-error');
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
@@ -38,7 +39,7 @@ module.exports.getUserById = (req, res) => {
         res.send({ data: user });
         return;
       }
-      res.status(404).send({ message: 'Пользователь по указанному id не найден.' });
+      throw new NotFoundError('Пользователь по указанному id не найден.');
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -99,7 +100,7 @@ module.exports.updateUser = (req, res) => {
         res.send({ data: user });
         return;
       }
-      res.status(404).send({ message: 'Пользователь по указанному id не найден.' });
+      throw new NotFoundError('Пользователь по указанному id не найден.');
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -122,7 +123,7 @@ module.exports.updateAvatar = (req, res) => {
         res.send({ data: user });
         return;
       }
-      res.status(404).send({ message: 'Пользователь по указанному id не найден.' });
+      throw new NotFoundError('Пользователь по указанному id не найден.');
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
