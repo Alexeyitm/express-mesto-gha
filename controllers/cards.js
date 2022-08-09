@@ -1,4 +1,5 @@
 const Card = require('../models/card');
+const NotFoundError = require('../errors/not-found-error');
 
 module.exports.getAllCards = (req, res, next) => {
   Card.find({})
@@ -26,7 +27,7 @@ module.exports.deleteCardById = (req, res, next) => {
         res.send({ data: user });
         return;
       }
-      res.status(404).send({ message: 'Карточка с указанным id не найдена.' });
+      throw new NotFoundError('К сожалению, карточка с указанным id не найдена.');
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -48,7 +49,7 @@ module.exports.addLike = (req, res, next) => {
         res.send({ data: user });
         return;
       }
-      res.status(404).send({ message: 'Передан несуществующий id карточки.' });
+      throw new NotFoundError('К сожалению, передан несуществующий id карточки.');
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -70,7 +71,7 @@ module.exports.deleteLike = (req, res, next) => {
         res.send({ data: user });
         return;
       }
-      res.status(404).send({ message: 'Передан несуществующий id карточки.' });
+      throw new NotFoundError('К сожалению, передан несуществующий id карточки.');
     })
     .catch((err) => {
       if (err.name === 'CastError') {

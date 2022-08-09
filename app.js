@@ -4,6 +4,7 @@ const { errors } = require('celebrate');
 const { celebrate, Joi } = require('celebrate');
 const { login, setUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const NotFoundError = require('./errors/not-found-error');
 
 const { PORT = 3000 } = process.env;
 
@@ -30,7 +31,9 @@ app.post('/signup', celebrate({
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 
-app.use('/*', (req, res) => res.status(404).send({ message: 'К сожалению, запрашиваемая страница не найдена.' }));
+app.use('/*', () => {
+  throw new NotFoundError('К сожалению, запрашиваемая страница не найдена.');
+});
 app.use(errors());
 
 app.use((err, req, res, next) => {
@@ -39,7 +42,7 @@ app.use((err, req, res, next) => {
     .status(statusCode)
     .send({
       message: statusCode === 500
-        ? 'На сервере произошла ошибка'
+        ? 'Ошибка сервера'
         : message,
     });
   next();
