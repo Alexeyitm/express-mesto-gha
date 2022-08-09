@@ -16,9 +16,8 @@ module.exports.createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new SendIncorrectDataError('К сожалению, переданы некорректные данные при создании карточки.');
-      } else {
-        next();
       }
+      next();
     });
 };
 
@@ -41,9 +40,8 @@ module.exports.deleteCardById = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new SendIncorrectDataError('К сожалению, передан некорректный id карточки');
-      } else {
-        next();
       }
+      next();
     });
 };
 
@@ -63,9 +61,8 @@ module.exports.addLike = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new SendIncorrectDataError('К сожалению, переданы некорректные данные для постановки/снятии лайка.');
-      } else {
-        next();
       }
+      next();
     });
 };
 
@@ -85,8 +82,7 @@ module.exports.deleteLike = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new SendIncorrectDataError('К сожалению, переданы некорректные данные для постановки/снятии лайка.');
-      } else {
-        next();
       }
+      next();
     });
 };
