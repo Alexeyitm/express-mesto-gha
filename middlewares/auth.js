@@ -3,11 +3,10 @@ const jwt = require('jsonwebtoken');
 const LoginDataError = require('../errors/login-data-error');
 
 module.exports = (req, res, next) => {
-  const { cookie } = req.headers;
-  if (!cookie || !cookie.startsWith('jwt=')) {
+  if (!req.cookies.jwt) {
     throw new LoginDataError('Необходима авторизация!');
   }
-  const token = cookie.replace('jwt=', '');
+  const token = req.cookies.jwt;
   let payload;
   try {
     payload = jwt.verify(token, 'some-secret-key');

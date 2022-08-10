@@ -11,6 +11,8 @@ const NotFoundError = require('./errors/not-found-error');
 const { PORT = 3000 } = process.env;
 
 const app = express();
+
+app.use(cookieParser());
 app.use(express.json());
 mongoose.connect('mongodb://localhost:27017/mestodb', {});
 
@@ -29,8 +31,6 @@ app.post('/signup', celebrate({
     password: Joi.string().required(),
   }).unknown(true),
 }), setUser);
-
-app.use(cookieParser());
 
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
