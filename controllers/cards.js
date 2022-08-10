@@ -29,10 +29,9 @@ module.exports.deleteCardById = (req, res, next) => {
     })
     .then((card) => {
       if (req.user._id === card.owner._id.valueOf()) {
-        card.remove();
-        res.send({ data: card });
-      } else {
-        throw new NotEnoughRightsError('К сожалению, нельзя удалить чужую карточку');
+        card.remove()
+          .then(() => res.send({ data: card }))
+          .catch(next(new NotEnoughRightsError('К сожалению, нельзя удалить чужую карточку')));
       }
     })
     .catch((err) => {
