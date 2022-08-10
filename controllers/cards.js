@@ -28,12 +28,12 @@ module.exports.deleteCardById = (req, res, next) => {
       throw new NotFoundError('К сожалению, карточка с указанным id не найдена.');
     })
     .then((card) => {
-      if (req.user._id === card.owner._id.valueOf()) {
-        card.remove()
-          .then(() => res.send({ data: card }))
-          .catch(next(new NotEnoughRightsError('К сожалению, нельзя удалить чужую карточку')));
+      if (req.user._id !== card.owner._id.valueOf()) {
+        throw new NotEnoughRightsError('К сожалению, нельзя удалить чужую карточку');
       }
+      return card.remove();
     })
+    .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new SendIncorrectDataError('К сожалению, передан некорректный id карточки'));
