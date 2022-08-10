@@ -16,18 +16,20 @@ module.exports.createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new SendIncorrectDataError('К сожалению, переданы некорректные данные при создании карточки.'));
+        return;
       }
       next(err);
     });
 };
 
 module.exports.deleteCardById = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .orFail(() => {
       throw new NotFoundError('К сожалению, карточка с указанным id не найдена.');
     })
     .then((card) => {
       if (req.user._id === card.owner._id.valueOf()) {
+        card.remove();
         res.send({ data: card });
       } else {
         throw new NotEnoughRightsError('К сожалению, нельзя удалить чужую карточку');
@@ -36,6 +38,7 @@ module.exports.deleteCardById = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new SendIncorrectDataError('К сожалению, передан некорректный id карточки'));
+        return;
       }
       next(err);
     });
@@ -54,6 +57,7 @@ module.exports.addLike = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new SendIncorrectDataError('К сожалению, переданы некорректные данные для постановки/снятии лайка.'));
+        return;
       }
       next(err);
     });
@@ -72,6 +76,7 @@ module.exports.deleteLike = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new SendIncorrectDataError('К сожалению, переданы некорректные данные для постановки/снятии лайка.'));
+        return;
       }
       next(err);
     });

@@ -43,6 +43,7 @@ module.exports.getUserById = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new SendIncorrectDataError('К сожалению, передан некорректный id.'));
+        return;
       }
       next(err);
     });
@@ -76,9 +77,11 @@ module.exports.setUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new SendIncorrectDataError('К сожалению, переданы некорректные данные при создании пользователя.'));
+        return;
       }
       if (err.code === 11000) {
         next(new UserFoundError('К сожалению, пользователь c таким email уже существует.'));
+        return;
       }
       next(err);
     });
@@ -98,6 +101,7 @@ module.exports.updateUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new SendIncorrectDataError('К сожалению, переданы некорректные данные при обновлении профиля.'));
+        return;
       }
       next(err);
     });
@@ -117,6 +121,7 @@ module.exports.updateAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new SendIncorrectDataError('К сожалению, переданы некорректные данные при обновлении аватара.'));
+        return;
       }
       next(err);
     });
